@@ -3,9 +3,15 @@ import pytest
 
 
 @pytest.mark.asyncio
-async def test_plugin_is_installed():
-    datasette = Datasette([], memory=True)
-    response = await datasette.client.get("/-/plugins.json")
+async def test_plugin_is_installed(tmpdir):
+    templates = tmpdir / "templates"
+    templates.mkdir()
+    pages = tmpdir / "templates" / "pages"
+    pages.mkdir()
+    (pages / "demo.html").write_text(
+        "request.args = {{ request.args._data|safe }}", "utf-8"
+    )
+    datasette = Datasette([], memory=True, template_dir=str(templates))
+    response = await datasette.client.get("/demo?foo=bar")
     assert response.status_code == 200
-    installed_plugins = {p["name"] for p in response.json()}
-    assert "datasette-template-request" in installed_plugins
+    assert response.text == "request.args = {'foo': ['bar']}"

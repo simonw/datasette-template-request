@@ -15,7 +15,9 @@ Install this plugin in the same environment as Datasette.
 
 ## Usage
 
-Usage instructions go here.
+Once this plugin is installed, Datasette [custom templates](https://docs.datasette.io/en/stable/custom_templates.html) can use `{{ request }}` to access the current [request object](https://docs.datasette.io/en/stable/internals.html#request-object). For example, to access `?name=Cleo` in the query string a template could use this:
+
+    Name: {{ request.args.name }}
 
 ## Development
 
